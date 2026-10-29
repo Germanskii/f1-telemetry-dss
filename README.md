@@ -2,8 +2,10 @@
 
 [![Checks](https://github.com/Germanskii/f1-telemetry-dss/actions/workflows/checks.yml/badge.svg)](https://github.com/Germanskii/f1-telemetry-dss/actions/workflows/checks.yml)
 
-An English-language telemetry review dashboard, developed from German Kashirski’s
-2026 Software Engineering bachelor’s thesis at **RTU MIREA**.
+A reproducible Python workflow for exploring Formula 1 lap telemetry: validate
+samples, derive time-aware features, inspect unusual speed changes and export
+an interactive report. Developed from German Kashirski’s 2026 Software Engineering
+bachelor’s thesis at **RTU MIREA**.
 
 Explore a lap, highlight unusual speed-change intervals, inspect the rules behind
 the labels, and replay recorded telemetry. Start with a deterministic synthetic
@@ -27,6 +29,41 @@ example, upload a one-lap CSV, or download historical telemetry through FastF1.
 This is an **academic, rule-based decision-support prototype**. It does not diagnose
 mechanical faults, connect to live race telemetry, or use a trained ML model or LLM.
 Ordinary cornering and braking can trigger flags. The flagged percentage is **not accuracy**.
+
+## Results you can reproduce
+
+Rechecked locally on **29 October 2026**, Windows / Python 3.10.11:
+
+| Scenario | Samples | Flagged samples | What it demonstrates |
+| --- | ---: | ---: | --- |
+| Synthetic lap, default settings | 400 | 28 (7.0%) | Offline analysis, category summaries and report export |
+| Same lap, minimum change raised from 8 to 40 km/h per sample | 400 | 0 | The threshold control changes the analysis |
+| 2023 Italian GP qualifying, fastest lap: SAI, lap 19, from local cache | 296 | 27 (9.12%) | Integration with historical FastF1 car telemetry |
+
+The default synthetic result contains 12 `BRAKES` and 16 `CHECK` labels. Historical
+telemetry contains ordinary driving events; flagged points are review candidates,
+not confirmed faults. Neither row measures precision, recall or racing improvement.
+
+**Software checks:** 14 pytest cases passed, including Streamlit AppTest; dependency,
+lint and formatting checks passed. The published baseline also has a successful
+[GitHub Actions run on Python 3.10 and 3.12](https://github.com/Germanskii/f1-telemetry-dss/actions/runs/35870852318).
+See [reproduction commands and result interpretation](docs/RESULTS.md),
+[example JSON output](docs/examples/demo-summary.json) and the [validation record](docs/VALIDATION.md).
+
+## Technical scope
+
+| Area | Implementation | Evidence |
+| --- | --- | --- |
+| Data analysis | pandas / NumPy validation, rolling smoothing, elapsed-time acceleration, IQR thresholds and distance-based intervals | `src/data_pipeline/preprocessing/`, `src/models/` |
+| Visualization | Streamlit controls, Plotly channel charts and downloadable CSV / JSON / standalone HTML | `src/dashboard/app.py`, `src/analysis.py` |
+| Data ingestion | FastF1 historical sessions with local caching, one-lap CSV input and deterministic synthetic data | `src/data_pipeline/load_fastf1_data.py`, `src/demo/` |
+| Reproducibility | Pinned direct dependencies, shared UI / CLI analysis, pytest, Ruff and GitHub Actions | `requirements*.txt`, `tests/`, `.github/workflows/checks.yml` |
+
+The project demonstrates exploratory analysis and local data-pipeline foundations.
+For ML work, its contribution is feature engineering and an explainable heuristic
+baseline; model training, labelled evaluation and deployment remain future work.
+The current pipeline runs locally in memory and local files; it has no database,
+workflow scheduler or distributed processing layer.
 
 ## Quick start
 
@@ -61,6 +98,20 @@ python -m streamlit run src/dashboard/app.py
 Open the local URL printed by Streamlit (normally `http://localhost:8501`).
 The synthetic example appears immediately; no race download is attempted at startup.
 If PowerShell blocks activation, run `.\.venv\Scripts\python.exe` instead of `python`.
+
+### A short walkthrough
+
+1. Inspect the synthetic lap: **400 samples**, **28 flagged**, **7.0% flagged share**.
+2. Switch between Speed and Acceleration; inspect the flagged intervals and review prompts.
+3. Raise **Minimum speed change** to **40**: the flagged count becomes **0**.
+   Restore **8** to recover the default result.
+4. Download the HTML report and open it locally. It includes the chart, settings
+   and summary, with no network connection needed to view it.
+5. Open **Historical replay**, start playback, then pause and reset it.
+   This replays recorded samples using their timestamps.
+
+No hosted demo is provided. The screenshot above uses the same synthetic input;
+the local dashboard and CLI are the runnable demonstrations.
 
 ### Historical session
 
@@ -137,8 +188,8 @@ src/
   demo/stream_emulator.py            synthetic data and timestamp replay
   agent/simple_agent.py             fixed English intents over the active result
   dashboard/app.py                   Streamlit interface
- tests/                             analysis and UI regression checks
- docs/                              screenshot, architecture and validation notes
+tests/                              analysis and UI regression checks
+docs/                               screenshot, results, architecture and validation notes
 ```
 
 Dashboard results stay in the browser session until downloaded. This prevents the

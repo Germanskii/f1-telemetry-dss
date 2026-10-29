@@ -1,5 +1,34 @@
 # Validation record
 
+## Recheck: 29 October 2026
+
+The local checkout matched published commit
+`274758a92736fd822752f1cc638728bcc981a845` before these documentation edits.
+The existing project environment used Windows and Python 3.10.11; this recheck
+did not create a fresh environment or reinstall dependencies.
+
+- `python -m pip check`: no broken requirements.
+- `python -m pytest -q`: **14 passed** (including Streamlit AppTest).
+- `python -m ruff check src tests`: passed.
+- `python -m ruff format --check src tests`: passed, 18 files already formatted.
+- `python -m src.analysis --output results/portfolio-review-2026-10-29`: completed;
+  CSV, JSON, text and HTML files were generated.
+- Synthetic default: 400 samples, 28 flags, 12 BRAKES / 16 CHECK; increasing
+  `min_speed_diff` to 40 produced zero flags.
+- FastF1 **cache-only** recheck: 2023 Italian GP qualifying, session-fastest lap
+  **SAI, lap 19**, 296 samples, 27 flags (22 BRAKES / 3 CHECK / 2 THROTTLE),
+  effective threshold 14.225 km/h per sample. This did not test a fresh download.
+- The existing screenshot was visually inspected. Browser playback, uploads and
+  downloaded HTML rendering were not rerun in a browser during this recheck;
+  the browser observations below belong to the original preparation.
+- GitHub API confirmed the published baseline's
+  [Checks run 35870852318](https://github.com/Germanskii/f1-telemetry-dss/actions/runs/35870852318)
+  completed successfully on 23 September 2026. That run predates these documentation edits.
+
+See [RESULTS.md](RESULTS.md) for reproduction commands and metric definitions.
+
+## Original validation: 23 September 2026
+
 Local validation on **2026-09-23**, Windows, Python 3.10.11, dependencies from
 `requirements.txt`. Dependencies were installed into a fresh project virtual environment.
 

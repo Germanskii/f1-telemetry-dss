@@ -1,0 +1,15 @@
+{
+  "rows": 400,
+  "anomalies": 28,
+  "rate": 7.000000000000001,
+  "causes": {
+    "CHECK": 16,
+    "BRAKES": 12
+  },
+  "thresholds": {
+    "IQR_k": 1.5,
+    "min_speed_diff": 8.0,
+    "abs_thr_used": 8.0,
+    "rolling_win": 5
+  }
+}
