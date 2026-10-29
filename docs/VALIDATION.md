@@ -1,5 +1,28 @@
 # Validation record
 
+## Isolated dependency refresh: 29 October 2026
+
+A fresh Windows / Python 3.12.10 environment installed the original pins before
+the dependency audit. Advisories affected Streamlit 1.50.0, its Pillow 11.3.0
+dependency, pytest 8.4.2 and the environment's old pip. The prepared branch now
+pins Streamlit 1.66.1, Pillow 13.0.0 and pytest 9.0.3; local pip is 26.2.2.
+The runtime support range is now Python 3.11–3.12 because the patched dependency
+set requires 3.11+. Earlier Python 3.10 checks below describe the old pins.
+
+- All 14 tests passed after the refresh, including Streamlit AppTest.
+- Dependency consistency, Ruff lint/format and the offline CLI passed.
+- The synthetic summary remains 400 samples / 28 flags / 12 BRAKES / 16 CHECK.
+- A real local Streamlit process served its health endpoint and HTML over
+  loopback HTTP, then was stopped. This is not a browser rendering check.
+- The installed environment's final pip-audit scan reported no known
+  vulnerabilities at the time of the check.
+- The screenshot was retained from the original interface. Full browser
+  upload/replay/export and a new FastF1 download were not repeated in this pass.
+
+The prepared workflow matrix is Python 3.11/3.12. Published Actions runs linked
+below precede this local dependency refresh; no remote CI result is claimed for it.
+The detection algorithm and original archives were not changed.
+
 ## Recheck: 29 October 2026
 
 The local checkout matched published commit

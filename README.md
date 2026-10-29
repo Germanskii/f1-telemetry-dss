@@ -67,8 +67,10 @@ workflow scheduler or distributed processing layer.
 
 ## Quick start
 
-Python **3.10–3.12**. Python 3.10 on Windows was exercised locally; the CI matrix
-checks Python 3.10 and 3.12 on Linux. No API key is required.
+Use Python **3.11–3.12** for the refreshed dependencies. The October audit uses
+Python 3.12.10 on Windows; the workflow is configured for 3.11 and 3.12 on Linux.
+Python 3.10 belongs to the earlier validation record and is no longer supported
+by these pins. No API key is required.
 
 ```bash
 git clone https://github.com/Germanskii/f1-telemetry-dss.git
@@ -91,6 +93,7 @@ source .venv/bin/activate
 Then:
 
 ```bash
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m streamlit run src/dashboard/app.py
 ```
